@@ -41,8 +41,8 @@ public class Board {
 		
 	}
 	
-	public int move(int curPosition, int moves) {
-		int finalPosition=curPosition+moves;
+	public int move(int curPosition, int diceValue) {
+		int finalPosition=curPosition+diceValue;
 		if(snakes.containsKey(finalPosition)) {
 			finalPosition=snakes.get(finalPosition);
 		}else if(ladders.containsKey(finalPosition)) {
@@ -50,8 +50,8 @@ public class Board {
 		}
 		return finalPosition;
 	}
-	public boolean validMoves(int curPosition, int moves) {
-		return (curPosition+moves)<=size;
+	public boolean isValidMove(int curPosition, int diceValue) {
+		return (curPosition+diceValue)<=size;
 	}
 	public boolean isWin(int curPosition) {
 		return curPosition==size;

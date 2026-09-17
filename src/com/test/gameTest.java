@@ -15,13 +15,9 @@ public class gameTest {
 		
 		SnakeAndLadders game;
 		try {
-			game = new SnakeAndLadders.Builder(100).addPlayer(p1).addPlayer(p2).addPlayer(p3).build();
-			for(int i=0;i<100;i++) {
-				Random rand = new Random();
-		        int min = 1;
-		        int max = 6;
-		        int rangedInt = rand.nextInt((max - min) + 1) + min;
-		        game.move(rangedInt);
+			game = new SnakeAndLadders.Builder(100).addPlayer(p1).addPlayer(p2).addPlayer(p3).addDice(6,1).build();
+			while(!game.isGameOver()) {
+				game.nextRoll();
 			}
 			game.getGameResult();
 		} catch (SnakeAndLadderException e) {

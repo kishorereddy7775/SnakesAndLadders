@@ -6,24 +6,29 @@ import java.util.List;
 import java.util.Queue;
 
 import com.board.Board;
+import com.dice.Dice;
 import com.entities.Player;
 import com.exception.SnakeAndLadderException;
 
 public class SnakeAndLadders {
 	private Board board; 
-	List<Player> players;
-	Queue<Player> turn;
+	private List<Player> players;
+	private Queue<Player> turn;
+	private Dice dice;
+	private int FinishedPlayers=0;
 	
 	private SnakeAndLadders(Builder builder) {
 		board=builder.board;
 		players=builder.players;
 		turn=builder.turn;
+		dice=builder.dice;
 	}
 	
 	public static class Builder{
 		private Board board;
-		List<Player> players;
-		Queue<Player> turn;
+		private List<Player> players;
+		private Queue<Player> turn;
+		private Dice dice;
 		
 		public Builder(int n) {
 			board=new Board(n);
@@ -36,6 +41,10 @@ public class SnakeAndLadders {
 			p.updatePosition(0);
 			return this;
 		}
+		public Builder addDice(int n, int numberOfDice) {
+			dice=new Dice(n,numberOfDice);
+			return this;
+		}
 		public SnakeAndLadders build() throws SnakeAndLadderException {
 			if(players.size()<2)
 				throw new SnakeAndLadderException("Atleast 2 players are required");
@@ -43,31 +52,35 @@ public class SnakeAndLadders {
 		}
 	}
 	
-	public void move(int moves) {
+	public void nextRoll() {
+		move(dice.roll());
+	}
+	
+	private void move(int diceValue) {
 		Player p=turn.peek();
-		if(turn.size()==1) {
-			System.out.println("Game Already Completed");
-			return;
-		}
-		if(!board.validMoves(p.getCurrentPosition(), moves)) {
+		if(!board.isValidMove(p.getCurrentPosition(), diceValue)) {
 			System.out.println("Invalid Move");
 			turn.poll();
 			turn.add(p);
 			return;
 		}
-		int finalPosition = board.move(p.getCurrentPosition(), moves);
+		int finalPosition = board.move(p.getCurrentPosition(), diceValue);
 		System.out.println(p.getName()+"-->"+p.getCurrentPosition()+"-->"+finalPosition);
 		p.updatePosition(finalPosition);
 		turn.poll();
 		if(board.isWin(finalPosition)) {
 			System.out.println(p.getName()+" Won!!");
-			p.upadateRank(getRank());
+			p.updateRank(++FinishedPlayers);
+			if(isGameOver()) {
+				turn.peek().updateRank(++FinishedPlayers);
+			}
 			return;
 		}
 		turn.add(p);
 	}
-	public int getRank() {
-		return players.size()-turn.size();
+	
+	public boolean isGameOver() {
+		return turn.size()==1;
 	}
 	
 	public void getGameResult() {

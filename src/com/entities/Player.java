@@ -17,7 +17,7 @@ public class Player {
 	public String getName() {
 		return name;
 	}
-	public void upadateRank(int rank) {
+	public void updateRank(int rank) {
 		this.rank=rank;
 	}
 	public int getRank() {
